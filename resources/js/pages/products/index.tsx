@@ -1,6 +1,8 @@
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,10 +12,29 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
+    const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
+    const flashMessage = flash?.success || flash?.error;
+    const [showAlert, setShowAlert] = useState(flashMessage ? true : false); //for alert timeout
+
+    useEffect(() => {
+        if (flashMessage) {
+            const timer = setTimeout(() => setShowAlert(false), 3000); //3 seconds before flash closes
+            return () => clearTimeout(timer);
+        }
+    }, [flashMessage]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Product Management" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl border p-4">
+                {showAlert && flashMessage && (
+                    <Alert variant={'default'} className={`${flash?.success ? 'bg-green-800' : flash?.error ? 'bg-red-800' : ''} ml-auto text-white`}>
+                        <AlertDescription className="text-white">
+                            {flash.success ? 'Success!' : 'Error!'} {''} {flashMessage}
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <div className="ml-auto">
                     <Link
                         className="text-md cursor-pointer rounded-lg bg-indigo-800 px-4 py-2 text-white hover:opacity-90"
