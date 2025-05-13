@@ -50,12 +50,12 @@ A simple Laravel-based CRUD (Create, Read, Update, Delete) application.
    php artisan key:generate
    ```
 
-7. **Run migrations**
+7. **Run migrations** (to create database based on DB_DATABASE)
    ```bash
    php artisan migrate
    ```
 
-8. **Create storage symlink**
+8. **Create storage symlink** (to display product image)
    ```bash
    php artisan storage:link
    ```
