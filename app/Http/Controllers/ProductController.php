@@ -82,22 +82,32 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->featured_image_url = $product->featured_image
+            ? asset('storage/' . $product->featured_image)
+            : null;
+
         return Inertia::render('products/product-form', [
             'product' => $product,
             'isView' => true,
         ]);
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)
     {
+        $product->featured_image_url = $product->featured_image
+            ? asset('storage/' . $product->featured_image)
+            : null;
+
         return Inertia::render('products/product-form', [
             'product' => $product,
             'isEdit' => true,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -105,13 +115,6 @@ class ProductController extends Controller
     public function update(ProductFormRequest $request, Product $product)
     {
         try {
-            Log::info('Update method reached!');
-            Log::info('Featured Image Received:', [
-                'hasFile' => $request->hasFile('featured_image'),
-                'file' => $request->file('featured_image'),
-                'all' => $request->all(), // Check all form data
-            ]);
-
             if ($product) {
                 $product->name = $request->name;
                 $product->description = $request->description;

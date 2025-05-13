@@ -141,7 +141,7 @@ export default function ProductForm({ ...props }) {
                                 {(isView || isEdit) && product.featured_image && (
                                     <div className="grid gap-2">
                                         <Label htmlFor="name">Current Featured Image</Label>
-                                        <img src={`/${product.featured_image}`} alt="featured image" className="h-40 w-50 rounded-lg border" />
+                                        <img src={product.featured_image_url} alt="featured image" className="h-40 w-50 rounded-lg border" />
                                     </div>
                                 )}
 
