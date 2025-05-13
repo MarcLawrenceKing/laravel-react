@@ -34,8 +34,6 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
-    console.log('AppSidebar mounted');
-
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

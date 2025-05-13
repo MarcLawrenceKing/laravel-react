@@ -1,7 +1,9 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { CirclePlus, Eye, Pencil, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -11,14 +13,27 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index() {
+interface Product {
+    // to get the products from database
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    featured_image: string;
+    created_at: string;
+}
+// parameters is to print the list
+export default function Index({ ...props }: { products: Product[] }) {
+    const { products } = props; // to get props attributes for printing in table
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success || flash?.error;
-    const [showAlert, setShowAlert] = useState(flashMessage ? true : false); //for alert timeout
+    const [showAlert, setShowAlert] = useState(flash?.success || flash?.error ? true : false); //for alert timeout
 
     useEffect(() => {
         if (flashMessage) {
-            const timer = setTimeout(() => setShowAlert(false), 3000); //3 seconds before flash closes
+            setShowAlert(true); // set showAlert to true when flashMessage is present
+
+            const timer = setTimeout(() => setShowAlert(false), 3000); // 3 seconds before flash closes
             return () => clearTimeout(timer);
         }
     }, [flashMessage]);
@@ -37,11 +52,11 @@ export default function Index() {
 
                 <div className="ml-auto">
                     <Link
-                        className="text-md cursor-pointer rounded-lg bg-indigo-800 px-4 py-2 text-white hover:opacity-90"
+                        className="text-md flex cursor-pointer rounded-lg bg-indigo-800 px-4 py-2 text-white hover:opacity-90"
                         as="button"
                         href={route('products.create')}
                     >
-                        Add Product
+                        <CirclePlus className="me-2" /> Add Product
                     </Link>
                 </div>
 
@@ -60,14 +75,55 @@ export default function Index() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className="border px-4 py-2 text-center">1</td>
-                                <td className="border px-4 py-2 text-center">Mobile Phone</td>
-                                <td className="border px-4 py-2 text-center">MP description</td>
-                                <td className="border px-4 py-2 text-center">120000</td>
-                                <td className="border px-4 py-2 text-center"> </td>
-                                <td className="border px-4 py-2 text-center">2/20/24</td>
-                            </tr>
+                            {products.length > 0 ? (
+                                products.map((product, index) => (
+                                    <tr key={index}>
+                                        <td className="border px-4 py-2 text-center">{product.id}</td>
+                                        <td className="border px-4 py-2 text-center">{product.name}</td>
+                                        <td className="border px-4 py-2 text-center">{product.description}</td>
+                                        <td className="border px-4 py-2 text-center">{product.price}</td>
+                                        <td className="border px-4 py-2 text-center">
+                                            {product.featured_image && (
+                                                <img src={product.featured_image} alt={product.name} className="h-16 w-16 object-cover" />
+                                            )}
+                                        </td>
+                                        <td className="border px-4 py-2 text-center">{product.created_at}</td>
+                                        <td className="border px-4 py-2 text-center">
+                                            <Link
+                                                as="button"
+                                                className="ms-2 cursor-pointer rounded-lg bg-sky-600 p-2 text-white hover:opacity-90"
+                                                href={route('products.show', product.id)}
+                                            >
+                                                <Eye size={18} />{' '}
+                                            </Link>
+                                            <Link
+                                                as="button"
+                                                className="ms-2 cursor-pointer rounded-lg bg-blue-600 p-2 text-white hover:opacity-90"
+                                                href={route('products.edit', product.id)}
+                                            >
+                                                <Pencil size={18} />{' '}
+                                            </Link>
+
+                                            <Button
+                                                className="ms-2 cursor-pointer rounded-lg bg-red-600 p-2 text-white hover:opacity-90"
+                                                onClick={() => {
+                                                    if (confirm('are you sure you want to delete this product?')) {
+                                                        router.delete(route('products.destroy', product.id), { preserveScroll: true });
+                                                    }
+                                                }}
+                                            >
+                                                <Trash size={18} />{' '}
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={7} className="text-md py-4 text-center font-bold text-red-600">
+                                        No Products Found!!
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
