@@ -21,6 +21,7 @@ interface Product {
     price: number;
     featured_image: string;
     created_at: string;
+    featured_image_url: string;
 }
 // parameters is to print the list
 export default function Index({ ...props }: { products: Product[] }) {
@@ -82,9 +83,9 @@ export default function Index({ ...props }: { products: Product[] }) {
                                         <td className="border px-4 py-2 text-center">{product.name}</td>
                                         <td className="border px-4 py-2 text-center">{product.description}</td>
                                         <td className="border px-4 py-2 text-center">{product.price}</td>
-                                        <td className="border px-4 py-2 text-center">
+                                        <td className="border px-4 py-2 align-middle">
                                             {product.featured_image && (
-                                                <img src={product.featured_image} alt={product.name} className="h-16 w-16 object-cover" />
+                                                <img src={product.featured_image_url} alt={product.name} className="h-16 w-16 object-cover" />
                                             )}
                                         </td>
                                         <td className="border px-4 py-2 text-center">{product.created_at}</td>

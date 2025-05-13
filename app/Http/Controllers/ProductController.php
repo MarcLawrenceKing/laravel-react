@@ -23,6 +23,9 @@ class ProductController extends Controller
             'price' => $product->price,
             'featured_image' => $product->featured_image,
             'featured_image_original_name' => $product->featured_image_original_name,
+            'featured_image_url' => $product->featured_image
+                ? asset('storage/' . $product->featured_image)
+                : null,
             'created_at' => $product->created_at->format('d M Y'),
         ]); // get products list
         return Inertia::render('products/index', [
